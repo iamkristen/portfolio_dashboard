@@ -19,7 +19,6 @@ const ExperienceForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
     // Add logic to submit the form data (e.g., send it to a server)
   };
 

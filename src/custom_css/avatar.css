@@ -1,0 +1,13 @@
+.avatar-frame {
+  border: 2px solid #ccc; /* Border color */
+  padding: 10px; /* Padding around the image */
+  border-radius: 50%; /* Make it circular */
+  max-width: 200px;
+  height: auto;
+}
+
+.avatar-frame img {
+  max-width: 100%; /* Ensure the image fits within the frame */
+  height: auto; /* Maintain aspect ratio */
+  max-height: 200px; /* Limit the height of the image */
+}
