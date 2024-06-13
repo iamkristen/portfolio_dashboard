@@ -1,90 +1,45 @@
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import AxiosInstance from "../api/axios/axios_instance";
 
 const MailboxList = () => {
+  const [emails, setEmails] = useState([]);
   const [selectedEmail, setSelectedEmail] = useState(null);
 
-  const emails =[
-      {
-        "_id": 1,
-        "fullName": "John Doe",
-        "email": "john@example.com",
-        "message": "Hello, how are you? This is a longer message that will be truncated for display.",
-        "createdAt": "2022-02-03T12:34:56.789Z"
-      },
-      {
-        "_id": 2,
-        "fullName": "Ravi Kushwaha",
-        "email": "Kushwaha33ravi@example.com",
-        "message": "Hello, how are you? This is a longer message that will be truncated for display.",
-        "createdAt": "2022-02-03T12:34:56.789Z"
-      },
-      {
-        "_id": 3,
-        "fullName": "Jane Smith",
-        "email": "jane@example.com",
-        "message": "Hi there! Just checking in.",
-        "createdAt": "2022-02-03T12:34:56.789Z"
-      },
-      {
-        "_id": 4,
-        "fullName": "Alex Johnson",
-        "email": "alex@example.com",
-        "message": "Greetings! Hope you're having a great day.",
-        "createdAt": "2022-02-03T12:34:56.789Z"
-      },
-      {
-        "_id": 5,
-        "fullName": "Emily Williams",
-        "email": "emily@example.com",
-        "message": "Hey! What's up?",
-        "createdAt": "2022-02-03T12:34:56.789Z"
-      },
-      {
-        "_id": 6,
-        "fullName": "David Lee",
-        "email": "david@example.com",
-        "message": "Good to see you. Let's catch up soon!",
-        "createdAt": "2022-02-03T12:34:56.789Z"
-      },
-      {
-        "_id": 7,
-        "fullName": "Sophia Rodriguez",
-        "email": "sophia@example.com",
-        "message": "Hello from the other side!",
-        "createdAt": "2022-02-03T12:34:56.789Z"
-      },
-      {
-        "_id": 8,
-        "fullName": "Michael Brown",
-        "email": "michael@example.com",
-        "message": "How's everything going on your end?",
-        "createdAt": "2022-02-03T12:34:56.789Z"
-      },
-      {
-        "_id": 9,
-        "fullName": "Olivia Martinez",
-        "email": "olivia@example.com",
-        "message": "Sending positive vibes your way!",
-        "createdAt": "2022-02-03T12:34:56.789Z"
-      },
-      {
-        "_id": 10,
-        "fullName": "Ethan Davis",
-        "email": "ethan@example.com",
-        "message": "Hope you're having a fantastic day!",
-        "createdAt": "2022-02-03T12:34:56.789Z"
-      }
-    ];
+  useEffect(() => {
+    // Fetch emails from the backend when the component mounts
+    fetchEmails();
+  }, []);
 
-  const handleEdit = (id) => {
-    // Add logic for edit functionality
-    console.log(`Edit email with ID: ${id}`);
+  const fetchEmails = async () => {
+    try {
+      const response = await AxiosInstance.get("/api/mailbox/get");
+      if (response.data.success) {
+        setEmails(response.data.data);
+      } else {
+        console.error("Failed to fetch emails:", response.data.error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
-  const handleDelete = (id) => {
-    // Add logic for delete functionality
-    console.log(`Delete email with ID: ${id}`);
+  const handleDelete = async (id) => {
+    try {
+      const response = await AxiosInstance.delete(`/api/mailbox/delete/${id}`);
+      if (response.data.success) {
+        // Remove the deleted email from the local state
+        setEmails(emails.filter((email) => email._id !== id));
+        console.log(`Email with ID ${id} deleted successfully`);
+      } else {
+        console.error(
+          `Failed to delete email with ID ${id}:`,
+          response.data.error
+        );
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   const handleEmailClick = (email) => {
@@ -92,14 +47,21 @@ const MailboxList = () => {
   };
 
   const renderShortMessage = (message) => {
-    const maxLength = 30; // Set your desired maximum length
-    return message.length > maxLength ? `${message.substring(0, maxLength)}...` : message;
+    const maxLength = 30;
+    return message.length > maxLength
+      ? `${message.substring(0, maxLength)}...`
+      : message;
   };
 
   return (
-    <div className="container mt-5" style={{ paddingTop: '20px' }}>
+    <div className="container mt-5" style={{ paddingTop: "20px" }}>
       {/* Bootstrap Modal */}
-      <div className="modal" tabIndex="-1" role="dialog" style={{ display: selectedEmail ? 'block' : 'none' }}>
+      <div
+        className="modal"
+        tabIndex="-1"
+        role="dialog"
+        style={{ display: selectedEmail ? "block" : "none" }}
+      >
         <div className="modal-dialog modal-dialog-centered" role="document">
           <div className="modal-content">
             <div className="modal-header">
@@ -111,7 +73,7 @@ const MailboxList = () => {
             <div className="modal-footer">
               <button
                 type="button"
-                className="btn btn-secondary"
+                className="btn btn-danger"
                 data-dismiss="modal"
                 onClick={() => setSelectedEmail(null)}
               >
@@ -135,15 +97,25 @@ const MailboxList = () => {
         </thead>
         <tbody>
           {emails.map((email, index) => (
-            <tr key={email._id} onClick={() => handleEmailClick(email)} style={{ cursor: 'pointer' }}>
+            <tr key={email._id}>
               <th scope="row">{index + 1}</th>
               <td>{email.fullName}</td>
               <td>{email.email}</td>
-              <td title={email.message}>{renderShortMessage(email.message)}</td>
+              <td
+                title={email.message}
+                onClick={() => handleEmailClick(email)}
+                style={{ cursor: "pointer" }}
+              >
+                {renderShortMessage(email.message)}
+              </td>
               <td>{new Date(email.createdAt).toLocaleString()}</td>
               <td>
-                <button className="btn btn-warning btn-sm" onClick={() => handleEdit(email._id)}>Edit</button>
-                <button className="btn btn-danger btn-sm ml-2" onClick={() => handleDelete(email._id)}>Delete</button>
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => handleDelete(email._id)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

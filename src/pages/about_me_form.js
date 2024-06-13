@@ -9,7 +9,7 @@ const AboutMeForm = () => {
     avatar: "",
     avatarFile: null,
     name: "",
-    profession: "",
+    profession: [], // Initialize profession as an array
     description: "",
     age: "",
     residence: "",
@@ -28,7 +28,7 @@ const AboutMeForm = () => {
             id: responseData._id, // Set id only if it exists
             avatar: responseData.avatar,
             name: responseData.name,
-            profession: responseData.profession.join(", "),
+            profession: responseData.profession, // Set profession as an array
             description: responseData.description,
             age: String(responseData.age),
             residence: responseData.residence,
@@ -49,7 +49,6 @@ const AboutMeForm = () => {
 
     try {
       const formDataToSend = new FormData();
-      // console.log("formData.avatarFile:", formData.avatarFile);
       if (formData.avatarFile !== null) {
         formDataToSend.append("image", formData.avatarFile);
 
@@ -75,6 +74,7 @@ const AboutMeForm = () => {
           const response = await AxiosInstance.post(url, {
             ...restOfTheData,
             avatar: newAvatarUrl,
+            profession: formData.profession, // Ensure profession is sent as an array
           });
 
           if (response.data.success) {
@@ -110,6 +110,7 @@ const AboutMeForm = () => {
 
         const response = await AxiosInstance.post(url, {
           ...restOfTheData,
+          profession: formData.profession, // Ensure profession is sent as an array
         });
 
         if (response.data.success) {
@@ -135,21 +136,21 @@ const AboutMeForm = () => {
         ...prevFormData,
         avatarFile: files[0],
       }));
+    } else if (name === "profession") {
+      // Split the profession string into an array
+      const professionArray = value.split(",").map((item) => item.trim());
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: professionArray,
+      }));
     } else {
       setFormData((prevFormData) => ({
         ...prevFormData,
         [name]: value,
       }));
     }
-    if (name === "profession") {
-      // Split the profession string into an array
-      const professionArray = value.split(",").map((item) => item.trim());
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        profession: professionArray,
-      }));
-    }
   };
+
   return (
     <div className="container mt-5" style={{ paddingTop: "20px" }}>
       <form onSubmit={handleSubmit}>
@@ -170,7 +171,7 @@ const AboutMeForm = () => {
               <img
                 src={formData.avatar}
                 alt="Avatar"
-                className="img-fluid rounded-circle  avatar-frame "
+                className="img-fluid rounded-circle avatar-frame"
               />
             </div>
           )}
@@ -199,7 +200,7 @@ const AboutMeForm = () => {
             className="form-control"
             id="profession"
             name="profession"
-            value={formData.profession}
+            value={formData.profession.join(",")} // Join array into string for display
             onChange={handleChange}
           />
         </div>

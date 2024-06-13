@@ -1,33 +1,62 @@
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap styles
+import React, { useState } from "react";
+import AxiosInstance from "../api/axios/axios_instance";
+import { useNavigate } from "react-router-dom";
 
 const KnowledgeForm = () => {
   const [formData, setFormData] = useState({
-    title: '',
+    title: "",
   });
+
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await AxiosInstance.post("/api/knowledge/add", {
+        title: formData.title,
+      });
+
+      if (response.data.success) {
+        alert("Knowledge entry added successfully");
+        navigate("/knowledge");
+      } else {
+        alert("Failed to add knowledge entry: " + response.data.error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Add logic to submit the form data (e.g., send it to a server)
-  };
-
   return (
-    <div className="container mt-5" style={{ paddingTop: '20px' }}>
+    <div className="container mt-5" style={{ paddingTop: "20px" }}>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label htmlFor="title" className="form-label">Title:</label>
-          <input type="text" className="form-control" id="title" name="title" value={formData.title} onChange={handleChange} required />
+          <label htmlFor="title" className="form-label">
+            Title:
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+          />
         </div>
 
-        <button type="submit" className="btn btn-primary">Submit</button>
+        <button type="submit" className="btn btn-primary">
+          Add
+        </button>
       </form>
     </div>
   );

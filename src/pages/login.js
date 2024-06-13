@@ -20,6 +20,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
     const result = await Login(formData);
     if (result) {
       window.location.reload();
