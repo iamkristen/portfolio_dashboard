@@ -2,20 +2,25 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../custom_css/custom_navbar.css";
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { isAuthenticated, LogOut } from "../helper/auth_handler";
 import logo from "../assets/logo.png";
 
 const MyNavbar = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // Get the navigate function from react-router
 
   const routesWithoutNavbar = ["/login"];
-
   const shouldHideNavbar = routesWithoutNavbar.includes(location.pathname);
 
   if (shouldHideNavbar) {
     return null;
   }
+
+  const handleLogout = () => {
+    LogOut(); // Call the LogOut function to handle the logout
+    navigate("/login"); // Redirect to login after logout
+  };
 
   return (
     <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
@@ -67,7 +72,7 @@ const MyNavbar = () => {
             Mail
           </Nav.Link>
           {isAuthenticated() ? (
-            <Nav.Link as={Link} to="/" onClick={LogOut}>
+            <Nav.Link as={Link} to="/" onClick={handleLogout}>
               Logout
             </Nav.Link>
           ) : null}
