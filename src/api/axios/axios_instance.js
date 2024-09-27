@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken } from "../../helper/token";
 
 const AxiosInstance = axios.create({
-  baseURL: "https://portmainapp.onrender.com",
+  baseURL: process.env.REACT_APP_API_URL,
   // headers: {
   //   "Content-Type": "application/json",
   //   Accept: "application/json",
