@@ -28,9 +28,7 @@ const MailboxList = () => {
     try {
       const response = await AxiosInstance.delete(`/api/mailbox/delete/${id}`);
       if (response.data.success) {
-        // Remove the deleted email from the local state
         setEmails(emails.filter((email) => email._id !== id));
-        console.log(`Email with ID ${id} deleted successfully`);
       } else {
         console.error(
           `Failed to delete email with ID ${id}:`,
