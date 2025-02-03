@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import AxiosInstance from "../api/axios/axios_instance";
 import { useNavigate } from "react-router-dom";
 
-const ProjectList = () => {
-  const [projects, setProjects] = useState([]);
+const CertificateList = () => {
+  const [certificates, setCertificates] = useState([]);
   const navigator = useNavigate();
 
   useEffect(() => {
@@ -12,78 +12,77 @@ const ProjectList = () => {
 
   const fetchData = async () => {
     try {
-      const response = await AxiosInstance.get("/api/projects/get");
+      const response = await AxiosInstance.get("/api/certificate/get");
       if (response.data.success) {
-        setProjects(response.data.data);
+          console.log(response.data.data);
+        setCertificates(response.data.data);
       }
     } catch (error) {
-      console.error(error);
+      console.log("Error fetching certificates:", error);
     }
   };
 
-  const handleUpdate = (project) => { 
-    navigator("/projects-form", { state: { project } });
+  const handleUpdate = (certificate) => {
+    navigator("/certificates-form", { state: { certificate } });
   };
 
   const handleDelete = async (id) => {
     try {
-      const response = await AxiosInstance.delete(`/api/projects/delete/${id}`);
+      const response = await AxiosInstance.delete(`/api/certificate/delete/${id}`);
       if (response.data.success) {
-        alert("Project deleted successfully");
-        // Remove the deleted project from the list
-        setProjects((prevProjects) =>
-          prevProjects.filter((project) => project._id !== id)
+        alert("Certificate deleted successfully");
+        setCertificates((prevCertificates) =>
+          prevCertificates.filter((certificate) => certificate._id !== id)
         );
       } else {
-        alert("Failed to delete project: " + response.data.error);
+        alert("Failed to delete certificate: " + response.data.error);
       }
     } catch (error) {
-      console.error("Error deleting project:", error);
+      console.error("Error deleting certificate:", error);
     }
   };
 
   const handleAdd = () => {
-    navigator("/projects-form");
-    // Redirect to add project page or open add project modal
+    navigator("/certificates-form");
   };
 
   return (
     <div className="container-fluid mt-5">
       <div className="row">
         <div className="col">
-          <div className="row"></div>
-
           <button className="btn btn-success mb-3 mt-3" onClick={handleAdd}>
-            Add Project
+            Add Certificate
           </button>
-          {projects.length === 0 ? (
+          {certificates.length === 0 ? (
             <center>
-              {" "}
-              <h1>No projects available</h1>
+              <h1>No certificates available</h1>
             </center>
           ) : (
             <table className="table table-bordered table-striped table-hover w-100">
               <thead>
                 <tr>
                   <th>Title</th>
+                  <th>Issuer</th>
+                  <th>Issued Date</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {projects.map((project) => (
-                  <tr key={project._id}>
-                    <td style={{ width: "100%" }}>{project.title}</td>
+                {certificates.map((certificate) => (
+                  <tr key={certificate._id}>
+                    <td>{certificate.name}</td>
+                    <td>{certificate.issuer}</td>
+                    <td>{new Date(certificate.dateIssued).toLocaleDateString()}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
-                      {/* project.banner && <img src={project.banner} alt="banner" /> */}
                       <button
                         className="btn btn-primary me-2"
-                        onClick={() => handleUpdate(project)}
+                        onClick={() => handleUpdate(certificate)}
                       >
                         Update
                       </button>
                       <button
                         className="btn btn-danger"
-                        onClick={() => handleDelete(project._id)}
+                        onClick={() => handleDelete(certificate._id)}
                       >
                         Delete
                       </button>
@@ -99,4 +98,4 @@ const ProjectList = () => {
   );
 };
 
-export default ProjectList;
+export default CertificateList;

@@ -22,6 +22,8 @@ import LoginPage from "./pages/login";
 import Dashboard from "./pages/dashboard";
 import { isAuthenticated } from "./helper/auth_handler";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Certificate from "./pages/certificateList";
+import CertificateForm from "./pages/certificate_form";
 
 function App() {
   return (
@@ -49,6 +51,8 @@ function App() {
               <Route path="/skills" element={<Skills />} />
               <Route path="/skills-form" element={<SkillsForm />} />
               <Route path="/mail" element={<MailboxList />} />
+              <Route path="/certificate" element={<Certificate />} />
+              <Route path="/certificates-form" element={<CertificateForm />} />
               <Route path="/login" element={<Navigate to="/" replace />} />
             </>
           ) : (

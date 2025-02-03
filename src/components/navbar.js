@@ -38,11 +38,15 @@ const MyNavbar = () => {
           <Nav.Link as={Link} to="/about-me">
             About Me
           </Nav.Link>
-          <Nav.Link as={Link} to="/blogs">
-            Blogs
-          </Nav.Link>
+          
           <Nav.Link as={Link} to="/projects">
             Projects
+          </Nav.Link>
+          <Nav.Link as={Link} to="/certificate">
+            Certificates
+          </Nav.Link>
+          <Nav.Link as={Link} to="/blogs">
+            Blogs
           </Nav.Link>
           <NavDropdown
             title="Resume"
